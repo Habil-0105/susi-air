@@ -14,6 +14,9 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const data_module_1 = require("./data/data.module");
 const auth_module_1 = require("./auth/auth.module");
+const pilot_module_1 = require("./pilot/pilot.module");
+const documents_module_1 = require("./documents/documents.module");
+const schedules_module_1 = require("./schedules/schedules.module");
 const all_exceptions_filter_1 = require("./common/filters/all-exceptions.filter");
 const app_clock_service_1 = require("./common/config/app-clock.service");
 const auth_guard_1 = require("./common/guards/auth.guard");
@@ -26,6 +29,9 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({ isGlobal: true }),
             data_module_1.DataModule,
             auth_module_1.AuthModule,
+            pilot_module_1.PilotModule,
+            documents_module_1.DocumentsModule,
+            schedules_module_1.SchedulesModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

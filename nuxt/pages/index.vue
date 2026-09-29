@@ -1,13 +1,16 @@
 <template>
   <div class="home-page">
     <div class="header">
-      <AppLogo size="sm" />
+      <div class="header-left">
+        <AppLogo size="sm" />
+        <h2 class="greeting">{{ greeting }}</h2>
+      </div>
       <div class="profile-summary" v-if="pilotData">
-        <img :src="pilotData.avatarUrl" alt="Avatar" class="avatar" />
         <div class="pilot-info">
           <h3>{{ pilotData.name }}</h3>
-          <p class="text-muted">{{ pilotData.totalFlightHours }} Total Hrs</p>
+          <p class="text-muted"><strong>{{ pilotData.totalFlightHours }}</strong> Total Hrs</p>
         </div>
+        <img :src="pilotData.avatarUrl" alt="Avatar" class="avatar" />
       </div>
       <div v-else-if="loading" class="profile-skeleton"></div>
     </div>
@@ -88,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useApi } from '~/composables/useApi';
 
 const api = useApi();
@@ -101,6 +104,13 @@ const selectedRange = ref('1w');
 
 const loading = ref(true);
 const loadingChart = ref(false);
+
+const greeting = computed(() => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning,';
+  if (hour < 18) return 'Good afternoon,';
+  return 'Good evening,';
+});
 
 async function loadInitialData() {
   loading.value = true;
@@ -153,6 +163,18 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 32px;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.greeting {
+  font-size: 16px;
+  font-weight: 800;
+  color: $navy;
 }
 
 .profile-summary {

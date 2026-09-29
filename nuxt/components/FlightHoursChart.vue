@@ -17,11 +17,13 @@ import {
   Tooltip,
   Legend,
   BarElement,
+  LineElement,
+  PointElement,
   CategoryScale,
   LinearScale
 } from 'chart.js';
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+ChartJS.register(Title, Tooltip, Legend, BarElement, LineElement, PointElement, CategoryScale, LinearScale);
 
 const props = defineProps({
   data: {
@@ -39,14 +41,29 @@ const chartData = computed(() => {
     return `${d.getUTCDate()}/${d.getUTCMonth() + 1}`;
   });
 
+  const limitValue = props.data.limit;
+
   const datasets = [
     {
-      label: '7-Day Rolling (Hrs)',
+      type: 'line',
+      label: 'Limit',
+      data: Array(props.data.points.length).fill(limitValue),
+      borderColor: '#E63757',
+      borderWidth: 2,
+      borderDash: [5, 5],
+      pointRadius: 0,
+      fill: false,
+      order: 1 // Draw on top
+    },
+    {
+      type: 'bar',
+      label: 'Rolling Hrs',
       data: props.data.points.map((p: any) => p.rollingSum),
       backgroundColor: props.data.points.map((p: any) => 
         p.isToday ? '#E63757' : (p.isFuture ? '#E5E7EB' : '#22C5E8')
       ),
       borderRadius: 4,
+      order: 2
     }
   ];
 
@@ -60,6 +77,7 @@ const chartOptions = computed(() => {
     plugins: {
       legend: { display: false },
       tooltip: {
+        filter: (tooltipItem: any) => tooltipItem.datasetIndex === 1,
         callbacks: {
           label: (context: any) => {
             const point = props.data.points[context.dataIndex];

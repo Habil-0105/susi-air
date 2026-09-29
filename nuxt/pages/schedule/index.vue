@@ -242,7 +242,7 @@ function openDay(day: number) {
 
 .weekdays {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   text-align: center;
   font-weight: 700;
   font-size: 13px;
@@ -252,7 +252,7 @@ function openDay(day: number) {
 
 .days-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 4px;
 }
 
@@ -307,6 +307,9 @@ function openDay(day: number) {
       font-size: 10px;
       font-weight: 800;
       color: $navy;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
   }
 

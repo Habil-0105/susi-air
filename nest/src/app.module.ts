@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { PilotModule } from './pilot/pilot.module';
 import { DocumentsModule } from './documents/documents.module';
 import { SchedulesModule } from './schedules/schedules.module';
+import { FlightHoursModule } from './flight-hours/flight-hours.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { AppClockService } from './common/config/app-clock.service';
 import { AuthGuard } from './common/guards/auth.guard';
@@ -20,6 +21,7 @@ import { AuthGuard } from './common/guards/auth.guard';
     PilotModule,
     DocumentsModule,
     SchedulesModule,
+    FlightHoursModule,
   ],
   controllers: [AppController],
   providers: [

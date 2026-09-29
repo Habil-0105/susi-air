@@ -1,0 +1,19 @@
+@import 'tokens';
+
+@mixin card {
+  background: $surface;
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

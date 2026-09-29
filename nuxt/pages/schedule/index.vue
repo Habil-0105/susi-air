@@ -3,59 +3,80 @@
     <div class="page-header">
       <h2>Schedule</h2>
       <div class="month-selector">
-        <button @click="changeMonth(-1)" class="icon-btn">&lt;</button>
+        <button @click="changeMonth(-1)" class="icon-btn" aria-label="Previous Month">&lt;</button>
         <span class="current-month">{{ monthName }} {{ year }}</span>
-        <button @click="changeMonth(1)" class="icon-btn">&gt;</button>
+        <button @click="changeMonth(1)" class="icon-btn" aria-label="Next Month">&gt;</button>
       </div>
     </div>
 
-    <!-- Horizontal Legend -->
-    <div class="legend-scroll" v-if="scheduleData">
-      <div class="legend-container">
-        <div 
-          v-for="item in scheduleData.legend" 
-          :key="item.code" 
-          class="legend-item"
-        >
-          <span class="legend-dot" :style="{ backgroundColor: item.color }"></span>
-          <span class="legend-label">{{ item.label }}</span>
+    <div v-if="loading" class="skeleton-area">
+      <div class="skeleton" style="height: 40px; margin-bottom: 24px; border-radius: 20px;"></div>
+      <div class="skeleton" style="height: 350px; border-radius: 16px;"></div>
+    </div>
+    
+    <div v-else-if="error" class="error-state">
+      <p>Failed to load schedule.</p>
+      <button @click="fetchSchedule" class="pill-btn">Retry</button>
+    </div>
+
+    <template v-else-if="scheduleData">
+      <!-- Horizontal Legend -->
+      <div class="legend-scroll">
+        <div class="legend-container">
+          <div 
+            v-for="item in scheduleData.legend" 
+            :key="item.code" 
+            class="legend-item"
+          >
+            <span class="legend-dot" :style="{ backgroundColor: item.color }"></span>
+            <span class="legend-label">{{ item.label }}</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Calendar Grid -->
-    <div class="calendar" v-if="scheduleData">
-      <div class="weekdays">
-        <div v-for="d in ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']" :key="d" class="weekday-cell">{{ d }}</div>
-      </div>
-      <div class="days-grid">
-        <div v-for="empty in blankDays" :key="`empty-${empty}`" class="day-cell empty"></div>
-        
-        <div 
-          v-for="day in daysInMonth" 
-          :key="`day-${day}`" 
-          class="day-cell"
-          :class="{ 'has-schedule': getSchedule(day) }"
-          @click="openDay(day)"
-        >
-          <div class="day-number">{{ day }}</div>
+      <!-- Calendar Grid -->
+      <div class="calendar">
+        <div class="weekdays">
+          <div v-for="d in ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']" :key="d" class="weekday-cell">{{ d }}</div>
+        </div>
+        <div class="days-grid">
+          <div v-for="empty in blankDays" :key="`empty-${empty}`" class="day-cell empty"></div>
           
-          <template v-if="getSchedule(day)">
-            <div class="schedule-content">
-              <span 
-                class="duty-dot" 
-                :style="{ backgroundColor: getSchedule(day).base_color }"
-              ></span>
-              <span class="base-name">{{ getSchedule(day).base_name }}</span>
-            </div>
+          <div 
+            v-for="day in daysInMonth" 
+            :key="`day-${day}`" 
+            class="day-cell"
+            :class="{ 
+              'has-schedule': getSchedule(day),
+              'is-today': isToday(day)
+            }"
+            @click="openDay(day)"
+            role="button"
+            :tabindex="getSchedule(day) ? 0 : -1"
+            :aria-label="`Day ${day}`"
+          >
+            <div class="day-number">{{ day }}</div>
             
-            <div v-if="getSchedule(day).remaining > 0" class="remaining-badge">
-              {{ getSchedule(day).remaining }}
-            </div>
-          </template>
+            <template v-if="getSchedule(day)">
+              <div class="schedule-content">
+                <span 
+                  class="duty-dot" 
+                  :style="{ backgroundColor: getSchedule(day).base_color }"
+                ></span>
+                <span class="base-name">{{ getSchedule(day).base_name }}</span>
+              </div>
+              
+              <div v-if="getSchedule(day).remaining === 0" class="tick-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div v-else class="remaining-badge">
+                {{ getSchedule(day).remaining }}
+              </div>
+            </template>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -70,6 +91,9 @@ const router = useRouter();
 const year = ref(2026);
 const month = ref(4);
 const scheduleData = ref<any>(null);
+const loading = ref(true);
+const error = ref(false);
+const todayStr = ref('');
 
 const monthName = computed(() => {
   const d = new Date(year.value, month.value - 1, 1);
@@ -86,11 +110,17 @@ const daysInMonth = computed(() => {
 });
 
 async function fetchSchedule() {
+  loading.value = true;
+  error.value = false;
   try {
     const data = await api.fetch(`/schedules?year=${year.value}&month=${month.value}`);
     scheduleData.value = data;
+    todayStr.value = data.today; // from API
   } catch (err) {
     console.error('Failed to fetch schedules', err);
+    error.value = true;
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -115,6 +145,11 @@ function getSchedule(day: number) {
   if (!scheduleData.value) return null;
   const targetDate = `${year.value}-${String(month.value).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
   return scheduleData.value.schedules.find((s: any) => s.duty_date === targetDate);
+}
+
+function isToday(day: number) {
+  const targetDate = `${year.value}-${String(month.value).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  return targetDate === todayStr.value;
 }
 
 function openDay(day: number) {
@@ -162,7 +197,7 @@ function openDay(day: number) {
     font-size: 16px;
     font-weight: 700;
     color: $navy;
-    padding: 0 4px;
+    padding: 0 8px;
   }
 }
 
@@ -230,6 +265,7 @@ function openDay(day: number) {
   display: flex;
   flex-direction: column;
   transition: all 0.2s;
+  border: 1px solid transparent;
   
   &.empty {
     background: transparent;
@@ -243,6 +279,10 @@ function openDay(day: number) {
     &:active {
       transform: scale(0.95);
     }
+  }
+
+  &.is-today {
+    border: 2px solid $chart;
   }
 
   .day-number {
@@ -284,5 +324,41 @@ function openDay(day: number) {
     @include flex-center;
     box-shadow: 0 2px 4px rgba($red, 0.3);
   }
+
+  .tick-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: $success;
+    color: white;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    @include flex-center;
+    box-shadow: 0 2px 4px rgba($success, 0.3);
+
+    svg {
+      width: 10px;
+      height: 10px;
+    }
+  }
+}
+
+/* Skeletons & Error */
+.skeleton {
+  background: linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.error-state {
+  text-align: center;
+  padding: 48px 0;
+  
+  p { margin-bottom: 16px; color: $text-muted; }
+  .pill-btn { padding: 8px 16px; }
 }
 </style>

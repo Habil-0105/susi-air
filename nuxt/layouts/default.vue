@@ -34,7 +34,7 @@ const showNav = computed(() => route.path !== '/login');
 </script>
 
 <style lang="scss" scoped>
-@import '~/assets/scss/tokens';
+@import '~/assets/scss/_tokens.scss';
 
 .layout {
   display: flex;

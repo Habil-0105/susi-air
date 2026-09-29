@@ -17,6 +17,7 @@ const auth_module_1 = require("./auth/auth.module");
 const pilot_module_1 = require("./pilot/pilot.module");
 const documents_module_1 = require("./documents/documents.module");
 const schedules_module_1 = require("./schedules/schedules.module");
+const flight_hours_module_1 = require("./flight-hours/flight-hours.module");
 const all_exceptions_filter_1 = require("./common/filters/all-exceptions.filter");
 const app_clock_service_1 = require("./common/config/app-clock.service");
 const auth_guard_1 = require("./common/guards/auth.guard");
@@ -32,6 +33,7 @@ exports.AppModule = AppModule = __decorate([
             pilot_module_1.PilotModule,
             documents_module_1.DocumentsModule,
             schedules_module_1.SchedulesModule,
+            flight_hours_module_1.FlightHoursModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

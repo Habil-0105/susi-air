@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Matches, CustomValidator, ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, Validate } from 'class-validator';
+import { IsNotEmpty, IsString, Matches, ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, Validate } from 'class-validator';
 
 @ValidatorConstraint({ name: 'isIsoDate', async: false })
 export class IsIsoDateConstraint implements ValidatorConstraintInterface {

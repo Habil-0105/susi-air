@@ -1,6 +1,6 @@
 <template>
   <div class="logo-wrapper" :class="size">
-    <img src="/logo-susiair.png" alt="Susi Air Logo" class="real-logo" />
+    <img :src="'/logo-susiair.png'" alt="Susi Air Logo" class="real-logo" />
   </div>
 </template>
 

@@ -13,8 +13,10 @@ const core_1 = require("@nestjs/core");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const data_module_1 = require("./data/data.module");
+const auth_module_1 = require("./auth/auth.module");
 const all_exceptions_filter_1 = require("./common/filters/all-exceptions.filter");
 const app_clock_service_1 = require("./common/config/app-clock.service");
+const auth_guard_1 = require("./common/guards/auth.guard");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -23,6 +25,7 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             config_1.ConfigModule.forRoot({ isGlobal: true }),
             data_module_1.DataModule,
+            auth_module_1.AuthModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
@@ -31,6 +34,10 @@ exports.AppModule = AppModule = __decorate([
             {
                 provide: core_1.APP_FILTER,
                 useClass: all_exceptions_filter_1.AllExceptionsFilter,
+            },
+            {
+                provide: core_1.APP_GUARD,
+                useClass: auth_guard_1.AuthGuard,
             },
         ],
     })

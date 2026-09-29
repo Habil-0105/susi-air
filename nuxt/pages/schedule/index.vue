@@ -258,9 +258,9 @@ function openDay(day: number) {
 
 .day-cell {
   aspect-ratio: 1;
-  border-radius: 12px;
+  border-radius: 8px;
   background: $bg;
-  padding: 6px;
+  padding: 4px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -286,25 +286,28 @@ function openDay(day: number) {
   }
 
   .day-number {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     margin-bottom: auto;
+    padding-left: 2px;
   }
 
   .schedule-content {
     display: flex;
     align-items: center;
-    gap: 4px;
-    margin-top: 4px;
+    gap: 2px;
+    margin-top: 2px;
+    padding-left: 2px;
     
     .duty-dot {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
+      flex-shrink: 0;
     }
     
     .base-name {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 800;
       color: $navy;
       overflow: hidden;

@@ -40,23 +40,28 @@
       </div>
     </section>
 
-    <!-- Documents Expiry -->
+    <!-- My Documents -->
     <section class="section docs-section">
-      <h3 class="section-title">Documents Status</h3>
-      <div class="chips-container" v-if="documentsData">
+      <h3 class="section-title">My Documents</h3>
+      <div class="docs-list" v-if="documentsData">
         <div 
           v-for="doc in documentsData.documents" 
           :key="doc.id"
-          class="doc-chip"
-          :class="`status-${doc.status}`"
+          class="doc-row"
         >
-          <span class="doc-label">{{ doc.label }}</span>
-          <span class="doc-days" v-if="doc.daysRemaining > 0">{{ doc.daysRemaining }}d</span>
-          <span class="doc-days" v-else>Expired</span>
+          <div class="doc-info">
+            <span class="doc-label">{{ doc.label }}</span>
+            <span class="doc-date">{{ formatDate(doc.expiryDate) }}</span>
+          </div>
+          <div class="doc-badge" :class="`badge-${doc.status}`">
+            <span v-if="doc.status === 'safe'">Safe</span>
+            <span v-else-if="doc.status === 'soon'">Expires in {{ doc.daysRemaining }} days</span>
+            <span v-else>Expired</span>
+          </div>
         </div>
       </div>
-      <div class="chips-container" v-else-if="loading">
-        <div class="doc-chip skeleton" v-for="i in 4" :key="i" style="width: 100px; height: 36px"></div>
+      <div class="docs-list" v-else-if="loading">
+        <div class="doc-row skeleton" v-for="i in 4" :key="i" style="height: 54px"></div>
       </div>
     </section>
 
@@ -143,6 +148,11 @@ async function changeRange(range: string) {
   } finally {
     loadingChart.value = false;
   }
+}
+
+function formatDate(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 onMounted(() => {
@@ -313,39 +323,53 @@ onMounted(() => {
   }
 }
 
-.chips-container {
+.docs-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 12px;
 }
 
-.doc-chip {
-  @include flex-center;
-  gap: 8px;
-  padding: 8px 14px;
-  border-radius: $radius-pill;
-  font-size: 13px;
-  font-weight: 600;
-  background: $surface;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  border: 1px solid #E5E7EB;
+.doc-row {
+  @include card;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
   
-  &.status-safe {
-    border-left: 4px solid $success;
-  }
-  &.status-soon {
-    border-left: 4px solid $warning;
-    background: rgba($warning, 0.05);
-  }
-  &.status-expired {
-    border-left: 4px solid $danger;
-    background: rgba($danger, 0.05);
-    color: $danger;
+  .doc-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    
+    .doc-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: $navy;
+    }
+    .doc-date {
+      font-size: 12px;
+      color: $text-muted;
+    }
   }
   
-  .doc-days {
-    opacity: 0.7;
-    font-size: 12px;
+  .doc-badge {
+    padding: 6px 12px;
+    border-radius: $radius-pill;
+    font-size: 11px;
+    font-weight: 700;
+    
+    &.badge-safe {
+      background: rgba($success, 0.1);
+      color: darken($success, 10%);
+    }
+    &.badge-soon {
+      background: rgba($warning, 0.1);
+      color: darken($warning, 15%);
+    }
+    &.badge-expired {
+      background: rgba($danger, 0.1);
+      color: $danger;
+    }
   }
 }
 

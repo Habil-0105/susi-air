@@ -35,8 +35,8 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '~/stores/auth';
 import { useApi } from '~/composables/useApi';
 
-const username = ref('johndoe');
-const password = ref('susiairtest');
+const username = ref('');
+const password = ref('');
 const loading = ref(false);
 const error = ref('');
 
@@ -69,7 +69,7 @@ async function handleLogin() {
 </script>
 
 <style lang="scss" scoped>
-@import '~/assets/scss/tokens';
+@import '~/assets/scss/_tokens.scss';
 
 .login-page {
   display: flex;

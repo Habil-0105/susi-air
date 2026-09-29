@@ -20,20 +20,6 @@
     </div>
 
     <template v-else-if="scheduleData">
-      <!-- Horizontal Legend -->
-      <div class="legend-scroll">
-        <div class="legend-container">
-          <div 
-            v-for="item in scheduleData.legend" 
-            :key="item.code" 
-            class="legend-item"
-          >
-            <span class="legend-dot" :style="{ backgroundColor: item.color }"></span>
-            <span class="legend-label">{{ item.label }}</span>
-          </div>
-        </div>
-      </div>
-
       <!-- Calendar Grid -->
       <div class="calendar">
         <div class="weekdays">
@@ -50,6 +36,7 @@
               'has-schedule': getSchedule(day),
               'is-today': isToday(day)
             }"
+            :style="getSchedule(day) ? { backgroundColor: getSchedule(day).base_color, color: getContrastYIQ(getSchedule(day).base_color) } : {}"
             @click="openDay(day)"
             role="button"
             :tabindex="getSchedule(day) ? 0 : -1"
@@ -59,10 +46,6 @@
             
             <template v-if="getSchedule(day)">
               <div class="schedule-content">
-                <span 
-                  class="duty-dot" 
-                  :style="{ backgroundColor: getSchedule(day).base_color }"
-                ></span>
                 <span class="base-name">{{ getSchedule(day).base_name }}</span>
               </div>
               
@@ -73,6 +56,20 @@
                 {{ getSchedule(day).remaining }}
               </div>
             </template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Horizontal Legend -->
+      <div class="legend-scroll">
+        <div class="legend-container">
+          <div 
+            v-for="item in scheduleData.legend" 
+            :key="item.code" 
+            class="legend-item"
+          >
+            <span class="legend-dot" :style="{ backgroundColor: item.color }"></span>
+            <span class="legend-label">{{ item.label }}</span>
           </div>
         </div>
       </div>
@@ -158,6 +155,19 @@ function openDay(day: number) {
     router.push(`/schedule/${schedule.duty_date}`);
   }
 }
+
+function getContrastYIQ(hexcolor: string) {
+  if (!hexcolor) return '#0E2138';
+  hexcolor = hexcolor.replace('#', '');
+  if (hexcolor.length === 3) {
+    hexcolor = hexcolor.split('').map((c: string) => c + c).join('');
+  }
+  const r = parseInt(hexcolor.substring(0, 2), 16);
+  const g = parseInt(hexcolor.substring(2, 2), 16);
+  const b = parseInt(hexcolor.substring(4, 2), 16);
+  const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+  return (yiq >= 128) ? '#0E2138' : '#FFFFFF';
+}
 </script>
 
 <style lang="scss" scoped>
@@ -203,7 +213,7 @@ function openDay(day: number) {
 
 .legend-scroll {
   overflow-x: auto;
-  margin-bottom: 24px;
+  margin-top: 24px;
   padding-bottom: 8px;
   
   &::-webkit-scrollbar {
@@ -299,17 +309,9 @@ function openDay(day: number) {
     margin-top: 2px;
     padding-left: 2px;
     
-    .duty-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    
     .base-name {
       font-size: 9px;
       font-weight: 800;
-      color: $navy;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;

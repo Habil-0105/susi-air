@@ -8,7 +8,7 @@
 defineProps({
   size: {
     type: String,
-    default: 'lg', // 'sm' | 'lg'
+    default: 'lg',
   }
 });
 </script>

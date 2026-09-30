@@ -37,7 +37,6 @@ const props = defineProps({
 const chartData = computed(() => {
   if (!props.data || !props.data.points) return null;
   
-  // Format labels: just day/month for better view
   const labels = props.data.points.map((p: any) => {
     const d = new Date(p.date);
     return `${d.getUTCDate()}/${d.getUTCMonth() + 1}`;
@@ -55,7 +54,7 @@ const chartData = computed(() => {
       borderDash: [5, 5],
       pointRadius: 0,
       fill: false,
-      order: 1 // Draw on top
+      order: 1
     },
     {
       type: 'bar',
@@ -93,7 +92,7 @@ const chartOptions = computed(() => {
     scales: {
       y: {
         beginAtZero: true,
-        max: props.data.yMax || 50, // use yMax from API if available
+        max: props.data.yMax || 50,
         grid: {
           color: '#F5F6F8'
         }

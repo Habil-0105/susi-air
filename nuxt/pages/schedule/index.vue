@@ -20,7 +20,6 @@
     </div>
 
     <template v-else-if="scheduleData">
-      <!-- Calendar Grid -->
       <div class="calendar">
         <div class="weekdays">
           <div v-for="d in ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']" :key="d" class="weekday-cell">{{ d }}</div>
@@ -60,7 +59,6 @@
         </div>
       </div>
 
-      <!-- Horizontal Legend -->
       <div class="legend-scroll">
         <div class="legend-container">
           <div 
@@ -99,7 +97,7 @@ const monthName = computed(() => {
 
 const blankDays = computed(() => {
   const d = new Date(year.value, month.value - 1, 1);
-  return d.getDay(); // 0-6
+  return d.getDay();
 });
 
 const daysInMonth = computed(() => {
@@ -112,7 +110,7 @@ async function fetchSchedule() {
   try {
     const data = await api.fetch(`/schedules?year=${year.value}&month=${month.value}`);
     scheduleData.value = data;
-    todayStr.value = data.today; // from API
+    todayStr.value = data.today;
   } catch (err) {
     console.error('Failed to fetch schedules', err);
     error.value = true;
@@ -352,7 +350,6 @@ function getContrastYIQ(hexcolor: string) {
   }
 }
 
-/* Skeletons & Error */
 .skeleton {
   background: linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%);
   background-size: 200% 100%;

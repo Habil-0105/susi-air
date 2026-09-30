@@ -15,7 +15,6 @@ export class SchedulesService {
     const schedulesData = this.dataService.schedulesData;
     const legend = schedulesData?.legend || [];
     
-    // Format month as 'YYYY-MM' to match prefix of duty_date
     const targetPrefix = `${dto.year}-${String(dto.month).padStart(2, '0')}`;
 
     const schedules = (schedulesData?.schedules || [])

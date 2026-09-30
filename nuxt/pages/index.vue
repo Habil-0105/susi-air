@@ -15,7 +15,6 @@
       <div v-else-if="loading" class="profile-skeleton"></div>
     </div>
 
-    <!-- Limits Cards -->
     <section class="section limits-section">
       <h3 class="section-title">Hours to Limit</h3>
       <div class="cards-grid" v-if="limitsData">
@@ -40,7 +39,6 @@
       </div>
     </section>
 
-    <!-- My Documents -->
     <section class="section docs-section">
       <h3 class="section-title">My Documents</h3>
       <div class="docs-list" v-if="documentsData">
@@ -65,7 +63,6 @@
       </div>
     </section>
 
-    <!-- Flight Hours Chart -->
     <section class="section chart-section">
       <div class="section-header">
         <h3 class="section-title">Flight Trend</h3>
@@ -273,7 +270,6 @@ onMounted(() => {
   font-weight: 700;
 }
 
-/* Limit Cards Grid */
 .cards-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -378,7 +374,6 @@ onMounted(() => {
   padding: 16px;
 }
 
-/* Skeletons */
 .skeleton {
   background: linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%);
   background-size: 200% 100%;
